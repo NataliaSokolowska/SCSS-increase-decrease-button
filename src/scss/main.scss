@@ -1,0 +1,160 @@
+//Colors Variables
+$greyColor: #eeeff1;
+$greenColor: #84b71c;
+$blueColor: #a3d3d5;
+$redColor: #ff3b41;
+$whiteColor: #ffffff;
+//Size Variables
+$mainSize: 16px;
+
+//Mixins
+@mixin triangle($direction, $size: 30px, $color: $redColor) {
+    @if $direction==down {
+        border-left: ($size * 2) solid transparent;
+        border-right: ($size * 2) solid transparent;
+        border-top: $size solid $color;
+    }
+
+    @else if $direction==up {
+        border-left: ($size * 2) solid transparent;
+        border-right: ($size * 2) solid transparent;
+        border-bottom: $size solid $color;
+    }
+
+    @else if $direction==left {
+        border-top: ($size * 2) solid transparent;
+        border-bottom: ($size * 2) solid transparent;
+        border-right: $size solid $color;
+    }
+
+    @else if $direction==right {
+        border-top: ($size * 2) solid transparent;
+        border-bottom: ($size * 2) solid transparent;
+        border-left: $size solid $color;
+    }
+}
+
+@mixin rem($property, $size) {
+    $remSize: $mainSize / 1rem;
+    #{$property}: $size;
+
+    @if type-of($size)=="number" {
+        #{$property}: $size / $remSize;
+    }
+
+    @else {
+        $rem-values: unquote("");
+
+        @each $value in $size {
+            @if $value==0 or type-of($value)=="string"or type-of($value)=="color" {
+                $rem-values: append($rem-values, $value);
+            }
+
+            @else {
+                $rem-values: append($rem-values, $value / $remSize);
+            }
+        }
+
+        #{$property}: $rem-values;
+    }
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    line-height: 100vh;
+    text-align: center;
+    margin: 0;
+    background-color: $greyColor;
+}
+
+p {
+    @include rem(font-size, 30px);
+}
+
+.btn-section {
+    display: flex;
+    justify-content: space-around;
+    @include rem(margin-top, 32px);
+
+    .btn {
+        @include rem(width, 700px);
+        @include rem(padding, 10px 30px);
+        overflow: hidden;
+
+        &::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -40px;
+            @include triangle(right);
+            transition: .5s linear;
+        }
+
+        &::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: -40px;
+            @include triangle(left);
+            transition: .5s linear;
+        }
+
+        &:hover::before {
+            left: 0;
+        }
+
+        &:hover::after {
+            right: 0;
+        }
+    }
+
+    button {
+        width: 200px;
+        height: 120px;
+        background-color: $greenColor;
+        color: $whiteColor;
+        @include rem(font-size, 26px);
+        @include rem(border, 1px solid $blueColor);
+        box-shadow: 0 0 0 2px $whiteColor, 0 0 0 4px $blueColor;
+        cursor: pointer;
+        position: relative;
+
+        &:nth-of-type(1)::before {
+            content: '+';
+            position: absolute;
+            bottom: 0;
+            left: -100%;
+            transition: .5s linear;
+        }
+
+        &:nth-of-type(3)::before {
+            content: '-';
+            position: absolute;
+            bottom: 0;
+            right: -100%;
+            transition: .5s linear;
+        }
+
+        &:hover {
+            background-color: $blueColor;
+        }
+
+        &:nth-of-type(1):hover::before {
+            left: calc(50% - 10px);
+            bottom: 10%;
+        }
+
+        &:nth-of-type(3):hover::before {
+            right: calc(50% - 10px);
+            bottom: 10%;
+        }
+    }
+}
+
+span.counter {
+    font-weight: bold;
+    color: $greenColor;
+}
